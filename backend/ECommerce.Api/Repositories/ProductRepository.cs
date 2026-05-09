@@ -9,6 +9,7 @@ public interface IProductRepository
 {
     Task<IEnumerable<Product>> GetAllAsync();
     Task<Product?> GetByIdAsync(int id);
+    Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<int> ids);
 }
 
 public class ProductRepository : IProductRepository
@@ -53,6 +54,34 @@ public class ProductRepository : IProductRepository
             return MapProduct(reader);
         }
         return null;
+    }
+
+    public async Task<IEnumerable<Product>> GetByIdsAsync(IEnumerable<int> ids)
+    {
+        var idList = ids.Distinct().ToList();
+        if (!idList.Any()) return Enumerable.Empty<Product>();
+
+        var products = new List<Product>();
+        using var conn = (SqlConnection)_connectionFactory.CreateConnection();
+        await conn.OpenAsync();
+
+        // Build parameterized IN clause - never string-concat user input.
+        var paramNames = idList.Select((_, i) => $"@p{i}").ToList();
+        var sql = $@"SELECT Id, Name, Category, Brand, Price, Description, ImageUrl, StockQuantity
+                     FROM Products WHERE Id IN ({string.Join(",", paramNames)})";
+
+        using var cmd = new SqlCommand(sql, conn);
+        for (int i = 0; i < idList.Count; i++)
+        {
+            cmd.Parameters.Add(new SqlParameter(paramNames[i], SqlDbType.Int) { Value = idList[i] });
+        }
+
+        using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            products.Add(MapProduct(reader));
+        }
+        return products;
     }
 
     private static Product MapProduct(IDataReader reader) => new()
