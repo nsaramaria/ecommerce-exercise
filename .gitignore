@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+**/bin/
+**/obj/
+**/dist/
+**/out-tsc/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Angular cache
+.angular/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# User-specific files
+*.rsuser
+
+# .NET
+*.pdb
+.config/dotnet-tools.json
