@@ -11,82 +11,214 @@ import { OrderResponse } from '../../models';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <h2 class="mb-4">Checkout</h2>
+    <section class="checkout-page">
+      <div class="page-container">
+        @if (orderResult(); as order) {
+          <div class="success-card fade-up">
+            <div class="check">✓</div>
+            <h1 class="success-title">order placed.</h1>
+            <p class="success-line">
+              order #{{ order.orderId }} — total confirmed by server:
+              <em>{{ order.totalAmount | currency:'USD':'symbol':'1.2-2' }}</em>
+            </p>
+            <a routerLink="/shop" class="btn btn-primary">keep shopping</a>
+          </div>
+        } @else if (cart.items().length === 0) {
+          <div class="empty fade-up">
+            <p class="empty-line">your bag is empty.</p>
+            <a routerLink="/shop" class="btn btn-primary">browse the lineup</a>
+          </div>
+        } @else {
+          <header class="header fade-up">
+            <p class="eyebrow">checkout</p>
+            <h1 class="title">where to?</h1>
+          </header>
 
-    @if (orderResult(); as order) {
-      <div class="alert alert-success">
-        <h4>✓ Order placed successfully!</h4>
-        <p>Order #{{ order.orderId }} — Total confirmed by server:
-           <strong>{{ order.totalAmount | currency:'USD' }}</strong></p>
-        <a routerLink="/products" class="btn btn-primary btn-sm">Continue shopping</a>
-      </div>
-    } @else if (cart.items().length === 0) {
-      <div class="alert alert-warning">
-        Your cart is empty. <a routerLink="/products">Add some products first</a>.
-      </div>
-    } @else {
-      <div class="row">
-        <div class="col-md-7">
-          <div class="card">
-            <div class="card-body">
-              <h5>Shipping address</h5>
+          <div class="checkout-grid fade-up">
+            <div class="form-card">
+              <h2 class="form-title">shipping address</h2>
               <form #form="ngForm" (ngSubmit)="placeOrder(form)">
-                <div class="mb-3">
-                  <label class="form-label">Address</label>
-                  <input class="form-control" name="shippingAddress"
-                         [(ngModel)]="model.shippingAddress" required>
+                <div class="field">
+                  <label>address</label>
+                  <input name="shippingAddress" [(ngModel)]="model.shippingAddress" required>
                 </div>
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label">City</label>
-                    <input class="form-control" name="city" [(ngModel)]="model.city" required>
+                <div class="row-2">
+                  <div class="field">
+                    <label>city</label>
+                    <input name="city" [(ngModel)]="model.city" required>
                   </div>
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label">Country</label>
-                    <input class="form-control" name="country" [(ngModel)]="model.country" required>
+                  <div class="field">
+                    <label>country</label>
+                    <input name="country" [(ngModel)]="model.country" required>
                   </div>
                 </div>
-                <div class="mb-3">
-                  <label class="form-label">Zip code</label>
-                  <input class="form-control" name="zipCode" [(ngModel)]="model.zipCode" required>
+                <div class="field">
+                  <label>zip code</label>
+                  <input name="zipCode" [(ngModel)]="model.zipCode" required>
                 </div>
 
                 @if (errorMessage()) {
-                  <div class="alert alert-danger">{{ errorMessage() }}</div>
+                  <div class="alert alert-error">{{ errorMessage() }}</div>
                 }
 
-                <button type="submit" class="btn btn-success" [disabled]="!form.valid || submitting()">
-                  {{ submitting() ? 'Placing order...' : 'Place Order' }}
+                <button type="submit" class="btn btn-primary place-btn"
+                        [disabled]="!form.valid || submitting()">
+                  {{ submitting() ? 'placing order…' : 'place order' }}
                 </button>
               </form>
             </div>
-          </div>
-        </div>
 
-        <div class="col-md-5">
-          <div class="card">
-            <div class="card-body">
-              <h5>Order summary</h5>
-              <ul class="list-unstyled">
+            <aside class="summary-card">
+              <h2 class="form-title">your bag</h2>
+              <ul class="lines">
                 @for (item of cart.items(); track item.product.id) {
-                  <li class="d-flex justify-content-between mb-1">
-                    <span>{{ item.product.name }} × {{ item.quantity }}</span>
-                    <span>{{ item.product.price * item.quantity | currency:'USD' }}</span>
+                  <li>
+                    <span class="line-name">{{ item.product.name | lowercase }} × {{ item.quantity }}</span>
+                    <span>{{ item.product.price * item.quantity | currency:'USD':'symbol':'1.0-0' }}</span>
                   </li>
                 }
               </ul>
-              <hr>
-              <div class="d-flex justify-content-between fw-bold">
-                <span>Estimated total:</span>
-                <span>{{ cart.displayedTotal() | currency:'USD' }}</span>
+              <div class="divider"></div>
+              <div class="row total">
+                <span>estimated total</span>
+                <span>{{ cart.displayedTotal() | currency:'USD':'symbol':'1.2-2' }}</span>
               </div>
-              <small class="text-muted">Server will recalculate the final total.</small>
-            </div>
+              <p class="note">server will recalculate the final total.</p>
+            </aside>
           </div>
-        </div>
+        }
       </div>
+    </section>
+  `,
+  styles: [`
+    .checkout-page { padding: 60px 0 100px; }
+
+    .header { text-align: center; margin-bottom: 56px; }
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 14px;
+      font-weight: 500;
     }
-  `
+    .title {
+      font-size: clamp(40px, 6vw, 60px);
+      line-height: 1;
+      margin: 0;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .form-card, .summary-card {
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      padding: 32px;
+    }
+    .summary-card { position: sticky; top: 96px; }
+
+    .form-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      margin: 0 0 20px;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .place-btn { width: 100%; margin-top: 12px; }
+
+    .lines {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px;
+    }
+    .lines li {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .line-name { font-family: var(--font-serif); }
+    .divider { height: 1px; background: var(--border); margin: 8px 0 12px; }
+    .row.total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .note {
+      margin: 14px 0 0;
+      font-size: 12px;
+      font-style: italic;
+      font-family: var(--font-serif);
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 80px 0;
+    }
+    .empty-line {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 22px;
+      color: var(--text-muted);
+      margin: 0 0 24px;
+    }
+
+    /* Success */
+    .success-card {
+      max-width: 540px;
+      margin: 80px auto;
+      background: var(--surface);
+      padding: 56px 40px;
+      border-radius: var(--radius-card);
+      text-align: center;
+    }
+    .check {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .success-title {
+      font-size: 40px;
+      margin: 0 0 12px;
+    }
+    .success-line {
+      color: var(--text-muted);
+      margin: 0 0 28px;
+    }
+    .success-line em {
+      color: var(--text);
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-grid { grid-template-columns: 1fr; }
+      .summary-card { position: static; }
+      .row-2 { grid-template-columns: 1fr; }
+    }
+  `]
 })
 export class CheckoutComponent {
   cart = inject(CartService);
@@ -117,7 +249,7 @@ export class CheckoutComponent {
         this.submitting.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message ?? 'Failed to place order. Please try again.');
+        this.errorMessage.set(err.error?.message ?? 'failed to place order. please try again.');
         this.submitting.set(false);
       }
     });

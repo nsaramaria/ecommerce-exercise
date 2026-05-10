@@ -10,4 +10,6 @@ public class Product
     public string Description { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
     public int StockQuantity { get; set; }
+    public string TubeColor { get; set; } = "#D4A89B";
+    public string CardBgColor { get; set; } = "#EFD9CC";
 }

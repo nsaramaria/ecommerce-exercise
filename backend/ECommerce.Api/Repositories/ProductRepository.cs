@@ -21,14 +21,16 @@ public class ProductRepository : IProductRepository
         _connectionFactory = connectionFactory;
     }
 
+    private const string SelectColumns = @"Id, Name, Category, Brand, Price, Description,
+                                            ImageUrl, StockQuantity, TubeColor, CardBgColor";
+
     public async Task<IEnumerable<Product>> GetAllAsync()
     {
         var products = new List<Product>();
         using var conn = (SqlConnection)_connectionFactory.CreateConnection();
         await conn.OpenAsync();
 
-        const string sql = @"SELECT Id, Name, Category, Brand, Price, Description, ImageUrl, StockQuantity
-                             FROM Products ORDER BY Id";
+        var sql = $"SELECT {SelectColumns} FROM Products ORDER BY Id";
         using var cmd = new SqlCommand(sql, conn);
         using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -43,8 +45,7 @@ public class ProductRepository : IProductRepository
         using var conn = (SqlConnection)_connectionFactory.CreateConnection();
         await conn.OpenAsync();
 
-        const string sql = @"SELECT Id, Name, Category, Brand, Price, Description, ImageUrl, StockQuantity
-                             FROM Products WHERE Id = @Id";
+        var sql = $"SELECT {SelectColumns} FROM Products WHERE Id = @Id";
         using var cmd = new SqlCommand(sql, conn);
         cmd.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id });
 
@@ -65,9 +66,8 @@ public class ProductRepository : IProductRepository
         using var conn = (SqlConnection)_connectionFactory.CreateConnection();
         await conn.OpenAsync();
 
-        // Build parameterized IN clause - never string-concat user input.
         var paramNames = idList.Select((_, i) => $"@p{i}").ToList();
-        var sql = $@"SELECT Id, Name, Category, Brand, Price, Description, ImageUrl, StockQuantity
+        var sql = $@"SELECT {SelectColumns}
                      FROM Products WHERE Id IN ({string.Join(",", paramNames)})";
 
         using var cmd = new SqlCommand(sql, conn);
@@ -93,6 +93,8 @@ public class ProductRepository : IProductRepository
         Price = reader.GetDecimal(reader.GetOrdinal("Price")),
         Description = reader.GetString(reader.GetOrdinal("Description")),
         ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
-        StockQuantity = reader.GetInt32(reader.GetOrdinal("StockQuantity"))
+        StockQuantity = reader.GetInt32(reader.GetOrdinal("StockQuantity")),
+        TubeColor = reader.GetString(reader.GetOrdinal("TubeColor")),
+        CardBgColor = reader.GetString(reader.GetOrdinal("CardBgColor"))
     };
 }

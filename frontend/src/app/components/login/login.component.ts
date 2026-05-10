@@ -9,40 +9,78 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <div class="row justify-content-center">
-      <div class="col-md-5">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title mb-4">Login</h3>
-            <form #form="ngForm" (ngSubmit)="submit(form)">
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" name="email"
-                       [(ngModel)]="model.email" required email>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-control" name="password"
-                       [(ngModel)]="model.password" required minlength="6">
-              </div>
+    <section class="auth-page">
+      <div class="auth-card fade-up">
+        <p class="eyebrow">welcome back</p>
+        <h1 class="title">log in.</h1>
 
-              @if (errorMessage()) {
-                <div class="alert alert-danger">{{ errorMessage() }}</div>
-              }
-
-              <button type="submit" class="btn btn-primary w-100"
-                      [disabled]="!form.valid || submitting()">
-                {{ submitting() ? 'Logging in...' : 'Login' }}
-              </button>
-            </form>
-            <p class="mt-3 mb-0 text-center">
-              No account? <a routerLink="/register">Register</a>
-            </p>
+        <form #form="ngForm" (ngSubmit)="submit(form)">
+          <div class="field">
+            <label>email</label>
+            <input type="email" name="email" [(ngModel)]="model.email" required email>
           </div>
-        </div>
+          <div class="field">
+            <label>password</label>
+            <input type="password" name="password" [(ngModel)]="model.password" required minlength="6">
+          </div>
+
+          @if (errorMessage()) {
+            <div class="alert alert-error">{{ errorMessage() }}</div>
+          }
+
+          <button type="submit" class="btn btn-primary submit-btn"
+                  [disabled]="!form.valid || submitting()">
+            {{ submitting() ? 'logging in…' : 'log in' }}
+          </button>
+        </form>
+
+        <p class="alt">
+          new here? <a routerLink="/register">make an account</a>
+        </p>
       </div>
-    </div>
-  `
+    </section>
+  `,
+  styles: [`
+    .auth-page {
+      min-height: calc(100vh - 220px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      padding: 48px 40px;
+    }
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 12px;
+      font-weight: 500;
+    }
+    .title {
+      font-size: 44px;
+      margin: 0 0 28px;
+    }
+    .submit-btn { width: 100%; margin-top: 12px; }
+    .alt {
+      text-align: center;
+      margin: 24px 0 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .alt a {
+      color: var(--accent);
+      font-style: italic;
+      font-family: var(--font-serif);
+    }
+    .alt a:hover { text-decoration: underline; }
+  `]
 })
 export class LoginComponent {
   private auth = inject(AuthService);
@@ -57,9 +95,9 @@ export class LoginComponent {
     this.submitting.set(true);
     this.errorMessage.set(null);
     this.auth.login(this.model).subscribe({
-      next: () => this.router.navigate(['/products']),
+      next: () => this.router.navigate(['/']),
       error: (err) => {
-        this.errorMessage.set(err.error?.message ?? 'Login failed. Please check your credentials.');
+        this.errorMessage.set(err.error?.message ?? 'login failed. please check your credentials.');
         this.submitting.set(false);
       }
     });

@@ -7,6 +7,8 @@ export interface Product {
   description: string;
   imageUrl: string;
   stockQuantity: number;
+  tubeColor: string;
+  cardBgColor: string;
 }
 
 export interface CartItem {

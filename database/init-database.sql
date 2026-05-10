@@ -38,7 +38,9 @@ CREATE TABLE dbo.Products (
     Price          DECIMAL(10, 2) NOT NULL,
     Description    NVARCHAR(1000) NOT NULL,
     ImageUrl       NVARCHAR(500)  NOT NULL,
-    StockQuantity  INT            NOT NULL DEFAULT 0
+    StockQuantity  INT            NOT NULL DEFAULT 0,
+    TubeColor      NVARCHAR(20)   NOT NULL DEFAULT '#D4A89B',
+    CardBgColor    NVARCHAR(20)   NOT NULL DEFAULT '#EFD9CC'
 );
 GO
 
@@ -72,23 +74,13 @@ CREATE INDEX IX_Orders_UserId ON dbo.Orders(UserId);
 CREATE INDEX IX_OrderItems_OrderId ON dbo.OrderItems(OrderId);
 GO
 
--- Seed products (inspired by automationexercise.com)
-INSERT INTO dbo.Products (Name, Category, Brand, Price, Description, ImageUrl, StockQuantity) VALUES
-('Blue Top',                    'Women', 'Polo',         500.00, 'Comfortable casual blue top for everyday wear.',                'https://automationexercise.com/get_product_picture/1',  50),
-('Men Tshirt',                  'Men',   'H&M',          400.00, 'Classic men''s t-shirt in soft cotton.',                        'https://automationexercise.com/get_product_picture/2',  75),
-('Sleeveless Dress',            'Women', 'Madame',       1000.00,'Elegant sleeveless dress for special occasions.',               'https://automationexercise.com/get_product_picture/3',  30),
-('Stylish Dress',               'Women', 'Mast & Harbour',1500.00,'Trendy stylish dress with a modern cut.',                       'https://automationexercise.com/get_product_picture/4',  20),
-('Winter Top',                  'Women', 'Allen Solly Junior',600.00,'Warm winter top, perfect for cold days.',                   'https://automationexercise.com/get_product_picture/5',  40),
-('Summer White Top',            'Women', 'Kookie Kids',  400.00, 'Light and breezy white top for the summer.',                    'https://automationexercise.com/get_product_picture/6',  60),
-('Madame Top For Women',        'Women', 'Madame',       1000.00,'Premium top from Madame, ideal for any occasion.',              'https://automationexercise.com/get_product_picture/7',  25),
-('Fancy Green Top',             'Women', 'Babyhug',      700.00, 'Fancy green top with a unique pattern.',                        'https://automationexercise.com/get_product_picture/8',  35),
-('Sleeves Printed Top - White', 'Women', 'Allen Solly Junior',400.00,'Printed top with elegant sleeve detail.',                   'https://automationexercise.com/get_product_picture/9',  45),
-('Half Sleeves Top Schiffli Detailing - Pink','Women','Kookie Kids',600.00,'Pink top with delicate schiffli detail.',             'https://automationexercise.com/get_product_picture/10', 30),
-('Frozen Tops For Kids',        'Kids',  'Kookie Kids',  500.00, 'Cute Frozen-themed tops for kids.',                             'https://automationexercise.com/get_product_picture/11', 80),
-('Full Sleeves Top Cherry - Pink','Kids','Kookie Kids',  900.00, 'Pink full-sleeve top with cherry print.',                       'https://automationexercise.com/get_product_picture/12', 50),
-('Printed Off Shoulder Top - White', 'Women','Mast & Harbour',1200.00,'Stylish off-shoulder printed top.',                        'https://automationexercise.com/get_product_picture/13', 18),
-('Sleeves Top and Short - Blue & Pink','Kids','Kookie Kids',1000.00,'Matching sleeves top and short set for kids.',                'https://automationexercise.com/get_product_picture/14', 40),
-('Cotton Mull Embroidered Dress','Women','Mast & Harbour',2500.00,'Beautiful embroidered cotton mull dress.',                     'https://automationexercise.com/get_product_picture/15', 12);
+-- Seed: 5 peptide lip tints (Rhode-inspired)
+INSERT INTO dbo.Products (Name, Category, Brand, Price, Description, ImageUrl, StockQuantity, TubeColor, CardBgColor) VALUES
+('Vanilla Glaze',    'Lip Tint', 'glow', 18.00, 'warm, sweet, soft',         '', 100, '#D4A89B', '#EFD9CC'),
+('Strawberry Glaze', 'Lip Tint', 'glow', 18.00, 'juicy, fresh, dreamy',      '', 100, '#E89B8C', '#F5C4B3'),
+('Espresso Glaze',   'Lip Tint', 'glow', 18.00, 'cozy, rich, smooth',        '', 100, '#C97A6E', '#D9A89E'),
+('Raspberry Jelly',  'Lip Tint', 'glow', 18.00, 'bold, bright, playful',     '', 100, '#B85970', '#D88FA0'),
+('Peach Fuzz',       'Lip Tint', 'glow', 18.00, 'soft, sunny, sheer',        '', 100, '#E8B89B', '#F2D2BD');
 GO
 
 PRINT 'Database initialized successfully.';
