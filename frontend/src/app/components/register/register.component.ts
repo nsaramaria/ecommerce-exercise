@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-register-user',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
@@ -104,7 +104,7 @@ import { AuthService } from '../../services/auth.service';
     }
   `]
 })
-export class RegisterComponent {
+export class RegisterUserComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
