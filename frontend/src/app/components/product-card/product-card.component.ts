@@ -2,17 +2,22 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Product } from '../../models';
 import { CartService } from '../../services/cart.service';
-import { LipstickTubeComponent } from '../lipstick-tube/lipstick-tube.component';
+import { ProductImageComponent } from '../product-image/product-image.component';
 
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, LipstickTubeComponent],
+  imports: [CommonModule, CurrencyPipe, ProductImageComponent],
   template: `
     <article class="card">
       <div class="visual" [style.background]="product.cardBgColor">
-        <div class="tube-frame">
-          <app-lipstick-tube [color]="product.tubeColor" [scale]="0.85"></app-lipstick-tube>
+        <div class="img-frame">
+          <app-product-image
+            [imageUrl]="product.imageUrl"
+            [fallbackColor]="product.tubeColor"
+            [alt]="product.name"
+            [height]="220"
+            [scale]="0.85"></app-product-image>
         </div>
       </div>
       <div class="meta">
@@ -51,7 +56,7 @@ import { LipstickTubeComponent } from '../lipstick-tube/lipstick-tube.component'
       transform: translateY(-6px);
       box-shadow: var(--shadow-md);
     }
-    .card:hover .tube-frame { transform: rotate(-4deg) scale(1.04); }
+    .card:hover .img-frame { transform: rotate(-4deg) scale(1.04); }
 
     .visual {
       aspect-ratio: 1;
@@ -59,16 +64,11 @@ import { LipstickTubeComponent } from '../lipstick-tube/lipstick-tube.component'
       align-items: center;
       justify-content: center;
       transition: background 0.3s ease;
+      overflow: hidden;
     }
+    .img-frame { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-    .tube-frame {
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .meta {
-      padding: 22px 24px 24px;
-    }
-
+    .meta { padding: 22px 24px 24px; }
     .name {
       font-family: var(--font-serif);
       font-size: 22px;
@@ -76,7 +76,6 @@ import { LipstickTubeComponent } from '../lipstick-tube/lipstick-tube.component'
       letter-spacing: -0.01em;
       margin: 0 0 4px;
     }
-
     .desc {
       font-family: var(--font-serif);
       font-style: italic;
@@ -84,19 +83,12 @@ import { LipstickTubeComponent } from '../lipstick-tube/lipstick-tube.component'
       color: var(--text-muted);
       margin: 0 0 18px;
     }
-
     .bottom-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-
-    .price {
-      font-size: 18px;
-      font-weight: 500;
-      letter-spacing: -0.01em;
-    }
-
+    .price { font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
     .add {
       display: inline-flex;
       align-items: center;
@@ -117,9 +109,7 @@ import { LipstickTubeComponent } from '../lipstick-tube/lipstick-tube.component'
       background: var(--text-muted);
       cursor: not-allowed;
     }
-    .add.added {
-      background: var(--accent);
-    }
+    .add.added { background: var(--accent); }
     .plus { font-size: 16px; line-height: 0; margin-top: -2px; }
     .check { font-size: 12px; }
   `]

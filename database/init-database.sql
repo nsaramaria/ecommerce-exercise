@@ -1,7 +1,6 @@
 /*
     ECommerce Database - Schema and Seed Data
     Run this against your SQL Server / LocalDB instance.
-    Compatible with: SQL Server 2017+, Azure SQL, LocalDB.
 */
 
 IF DB_ID('ECommerceDb') IS NULL
@@ -13,7 +12,6 @@ GO
 USE ECommerceDb;
 GO
 
--- Drop tables if they exist (for re-runs). Order matters: FK children first.
 IF OBJECT_ID('dbo.OrderItems', 'U') IS NOT NULL DROP TABLE dbo.OrderItems;
 IF OBJECT_ID('dbo.Orders',     'U') IS NOT NULL DROP TABLE dbo.Orders;
 IF OBJECT_ID('dbo.Products',   'U') IS NOT NULL DROP TABLE dbo.Products;
@@ -74,13 +72,13 @@ CREATE INDEX IX_Orders_UserId ON dbo.Orders(UserId);
 CREATE INDEX IX_OrderItems_OrderId ON dbo.OrderItems(OrderId);
 GO
 
--- Seed: 5 peptide lip tints (Rhode-inspired)
+-- Seed: 5 peptide lip tints
 INSERT INTO dbo.Products (Name, Category, Brand, Price, Description, ImageUrl, StockQuantity, TubeColor, CardBgColor) VALUES
-('Vanilla Glaze',    'Lip Tint', 'glow', 18.00, 'warm, sweet, soft',         '', 100, '#D4A89B', '#EFD9CC'),
-('Strawberry Glaze', 'Lip Tint', 'glow', 18.00, 'juicy, fresh, dreamy',      '', 100, '#E89B8C', '#F5C4B3'),
-('Espresso Glaze',   'Lip Tint', 'glow', 18.00, 'cozy, rich, smooth',        '', 100, '#C97A6E', '#D9A89E'),
-('Raspberry Jelly',  'Lip Tint', 'glow', 18.00, 'bold, bright, playful',     '', 100, '#B85970', '#D88FA0'),
-('Peach Fuzz',       'Lip Tint', 'glow', 18.00, 'soft, sunny, sheer',        '', 100, '#E8B89B', '#F2D2BD');
+('Vanilla Glaze',    'Lip Tint', 'glow', 18.00, 'warm, sweet, soft',     '/assets/products/vanilla.png',    100, '#D4A89B', '#EFD9CC'),
+('Strawberry Glaze', 'Lip Tint', 'glow', 18.00, 'juicy, fresh, dreamy',  '/assets/products/strawberry.png', 100, '#F4C4C9', '#F8DEE0'),
+('Espresso Glaze',   'Lip Tint', 'glow', 18.00, 'cozy, rich, smooth',    '/assets/products/espresso.png',   100, '#6B4538', '#A88A7A'),
+('Raspberry Jelly',  'Lip Tint', 'glow', 18.00, 'bold, bright, playful', '/assets/products/raspberry.png',  100, '#B85970', '#D88FA0'),
+('Lavender Mist',    'Lip Tint', 'glow', 18.00, 'soft, dreamy, sheer',   '/assets/products/lavender.png',   100, '#E8B8D4', '#F2D2E2');
 GO
 
 PRINT 'Database initialized successfully.';
